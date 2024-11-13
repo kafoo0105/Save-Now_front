@@ -14,6 +14,7 @@ function App() {
       백엔드 데이터: {hello}
       <h1>첫 번째 커밋, 푸시 확인입니다 - 건희</h1>
       <div>커밋</div>
+      <div>커밋 이정원</div>
     </div>
   );
 }
