@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Login from './pages/Login';
 
 function App() {
   const [hello, setHello] = useState('');
@@ -11,13 +13,17 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      백엔드 데이터: {hello}
-      <h1>첫 번째 커밋, 푸시 확인입니다 - 건희</h1>
-      <div>커밋</div>
-      <div>커밋 이정원</div>
-      <div>백엔드 데이터: {hello}</div>
-    </div>
+    <>
+      <div className="App">
+        백엔드 데이터: {hello}
+      </div>
+
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+        </Routes>
+      </Router>
+    </>
   );
 }
 
