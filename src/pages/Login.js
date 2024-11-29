@@ -144,41 +144,56 @@ const KakaoIcon = styled.span`
 `;
 
 export default function Login() {
+  // 사용자 입력 데이터를 저장
   const [formData, setFormData] = useState({
     id: '',
     password: '',
   });
+
+  // 폼 입력을 검증할 때 나타날 에러 메시지 상태. id 관련 에러 메시지
   const [errors, setErrors] = useState({
     id: '',
   });
 
+  // 이메일 형식을 검증하는 정규식. 이메일의 일반적인 패턴을 검사
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    return emailRegex.test(email); // emailRegex 정규식이 email과 일치하는지 test
   };
 
+  // 사용자가 폼 입력값을 변경하면 호출. 입력되는 데이터를 상태에 업데이트
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target; // 이벤트 객체에서 입력 필드의 name과 value 추출
+    // 업데이트
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
+  // 로그인 버튼을 눌렀을 때 호출. 입력된 id 값이 올바른 이메일 형식인지 확인
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault(); // 폼이 제출될 때 페이지의 새로고침을 방지
+
+    // 이메일 검증 함수 호출
     const emailValid = validateEmail(formData.id);
 
+    // 이메일 형식이 잘못되었을 시에 에러 메시지 설정
     if (!emailValid) {
       setErrors((prev) => ({
         ...prev,
         id: '*올바른 이메일 형식이 아닙니다.',
       }));
-      return;
+      return; // 로그인 실패 후 동작을 중단
     }
 
+    // 이메일 검증에 성공 시에 오류 메시지를 초기화
     setErrors({ id: '' });
+
     console.log('Login attempt with:', formData);
+
+    // API 요청 로직 작성 예정
+
   };
 
   return (
@@ -199,11 +214,13 @@ export default function Login() {
             onChange={handleChange}
             error={errors.id}
           />
+          {/* 이메일 형식이 잘못되었을 때 오류 메시지를 표시. */}
           <ErrorMessage visible={!!errors.id}>{errors.id}</ErrorMessage>
         </InputGroup>
 
         <InputGroup>
           <Label>비밀번호</Label>
+          {/* 비밀번호 입력 필드. 상태를 통해 값을 동기화하고, 변경 시 handleChange 호출. */}
           <Input
             type="password"
             name="password"
