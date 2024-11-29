@@ -169,6 +169,16 @@ export default function Login() {
     id: '',
   });
 
+  // 카카오 OAuth 관련 상수
+  const REST_API_KEY = '받을 예정'; // 백엔드에서 제공받은 REST API KEY
+  const REDIRECT_URI = '받을 예정'; // 백엔드에서 제공받은 Redirect URI
+  const link = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+
+  // 카카오 로그인 핸들러. 클릭 시 카카오 인증 페이지로 이동
+  const kakaoLoginHandler = () => {
+    window.location.href = link; // OAuth 인증 페이지로 이동
+  };
+
   // 이메일 형식을 검증하는 정규식. 이메일의 일반적인 패턴을 검사
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -207,7 +217,7 @@ export default function Login() {
     console.log('Login attempt with:', formData);
 
     // API 요청 로직 작성 예정
-    
+
   };
 
   return (
@@ -253,9 +263,9 @@ export default function Login() {
         <a href="/signup">회원가입</a>
       </SignupLink>
 
-      <KakaoButton>
+      <KakaoButton type="button" onClick={kakaoLoginHandler}>
         {/* 심볼 */}
-        <KakaoIcon src={kakaoSymbol} alt="카카오 심볼" />
+        <KakaoIcon src={kakaoSymbol} alt="말풍선" />
         {/* 레이블 */}
         <KakaoLabel>카카오 로그인</KakaoLabel>
       </KakaoButton>
