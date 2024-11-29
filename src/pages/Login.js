@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import kakaoSymbol from "../assets/icons/kakaoSimbol.svg";
 
 const LoginContainer = styled.div`
   max-width: 500px;
@@ -81,6 +82,7 @@ const ForgotPassword = styled.span`
   font-size: 12px;
   color: #666;
   margin-top: 8px;
+  margin-right: 4px;
   cursor: pointer;
 `;
 
@@ -122,25 +124,37 @@ const SignupLink = styled.div`
   }
 `;
 
+// 카카오 소셜 로그인 디자인 가이드에 맞게 카카오 버튼 구현
+// 컨테이너 디자인
 const KakaoButton = styled.button`
   width: 500px;
   height: 60px;
-  background-color: #ffe500;
+  background-color: #fee500;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* OS별 기본 서체 */
+  color: rgba(0, 0, 0, 0.85);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  &:hover {
-    background-color: #ffd700;
-  }
+  position: relative;
 `;
 
-const KakaoIcon = styled.span`
-  margin-right: 8px;
+// 심볼 디자인
+const KakaoIcon = styled.img`
+  position: absolute;
+  left: 24px;
+  width: 24px;
+  height: 24px;
+`;
+
+// 레이블 디자인
+const KakaoLabel = styled.span`
+  font-size: 16px;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.85);
 `;
 
 export default function Login() {
@@ -240,8 +254,10 @@ export default function Login() {
       </SignupLink>
 
       <KakaoButton>
-        <KakaoIcon>💬</KakaoIcon>
-        카카오톡으로 로그인하기
+        {/* 심볼 */}
+        <KakaoIcon src={kakaoSymbol} alt="카카오 심볼" />
+        {/* 레이블 */}
+        <KakaoLabel>카카오 로그인</KakaoLabel>
       </KakaoButton>
     </LoginContainer>
   );
