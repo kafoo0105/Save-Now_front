@@ -207,7 +207,7 @@ export default function Login() {
     console.log('Login attempt with:', formData);
 
     // API 요청 로직 작성 예정
-
+    
   };
 
   return (
