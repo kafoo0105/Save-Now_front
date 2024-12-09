@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import kakaoSymbol from "../assets/icons/kakaoSimbol.svg";
+import axios from 'axios';
 
 const LoginContainer = styled.div`
   max-width: 500px;
@@ -166,12 +167,16 @@ export default function Login() {
 
   // 폼 입력을 검증할 때 나타날 에러 메시지 상태. id 관련 에러 메시지
   const [errors, setErrors] = useState({
-    id: '',
+    id: '', // 이메일 형식 검증 에러 메시지
+    login: '', // 로그인 실패 시 표시할 에러 메시지
   });
 
+  // 로딩 상태 (로딩 시에 버튼 비활성화를 위한 상태)
+  const [loading, setLoading] = useState(false);
+
   // 카카오 OAuth 관련 상수
-  const REST_API_KEY = '받을 예정'; // 백엔드에서 제공받은 REST API KEY
-  const REDIRECT_URI = '받을 예정'; // 백엔드에서 제공받은 Redirect URI
+  const REST_API_KEY = 'd9c739e17449e17b9470514b27f11ceb'; // 백엔드에서 제공받은 REST API KEY
+  const REDIRECT_URI = 'http://localhost:8080/callback'; // 백엔드에서 제공받은 Redirect URI
   const link = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
   // 카카오 로그인 핸들러. 클릭 시 카카오 인증 페이지로 이동
@@ -196,8 +201,10 @@ export default function Login() {
   };
 
   // 로그인 버튼을 눌렀을 때 호출. 입력된 id 값이 올바른 이메일 형식인지 확인
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault(); // 폼이 제출될 때 페이지의 새로고침을 방지
+
+    setLoading(true); // 로딩 시작
 
     // 이메일 검증 함수 호출
     const emailValid = validateEmail(formData.id);
@@ -208,16 +215,55 @@ export default function Login() {
         ...prev,
         id: '*올바른 이메일 형식이 아닙니다.',
       }));
+      setLoading(false); // 버튼 비활성화 해제
       return; // 로그인 실패 후 동작을 중단
     }
 
     // 이메일 검증에 성공 시에 오류 메시지를 초기화
-    setErrors({ id: '' });
+    setErrors((prev) => ({
+      ...prev,
+      id: '',
+      login: ''
+    }));
 
-    console.log('Login attempt with:', formData);
+    console.log('Login attempt with:', formData.id);
 
-    // API 요청 로직 작성 예정
+    try {
+      // 로그인 API 요청
+      const response = await axios.post('http://localhost:8010/api/login', {
+        email: formData.id,
+        password: formData.password,
+      });
 
+      const { code, msg, data } = response.data;
+
+      if (code === 1) {
+        alert('로그인 성공!');
+        setFormData({ id: '', password: '' });
+        window.location.href = '/dashboard'; // 로그인 성공 후 리다이렉트
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          login: '*로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해주세요.',
+        }));
+      }
+    } catch (error) {
+      if (error.response) {
+        // 서버 응답이 있지만, 오류 코드가 있는 경우
+        setErrors((prev) => ({
+          ...prev,
+          login: '*로그인에 실패했습니다. 서버의 응답을 확인해주세요.',
+        }));
+      } else {
+        // 네트워크 오류일 때
+        setErrors((prev) => ({
+          ...prev,
+          login: '*서버 요청에 실패했습니다. 다시 시도해주세요.',
+        }));
+      }
+    } finally {
+      setLoading(false); // 로딩 종료
+    }
   };
 
   return (
@@ -255,7 +301,11 @@ export default function Login() {
           <ForgotPassword>비밀번호 찾기</ForgotPassword>
         </InputGroup>
 
-        <LoginButton type="submit">로그인</LoginButton>
+        <ErrorMessage visible={!!errors.login}>{errors.login}</ErrorMessage>
+
+        <LoginButton type="submit" disabled={loading}>
+          {loading ? '로그인 중...' : '로그인'}
+        </LoginButton>
       </form>
 
       <SignupLink>

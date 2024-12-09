@@ -6,7 +6,7 @@ import Login from './pages/Login';
 function App() {
   const [hello, setHello] = useState('');
   useEffect(() => {
-    axios.get('http://localhost:8080/api/test')
+    axios.get('http://localhost:8010/api/test')
       .then((res) => {
         setHello(res.data);
       });
